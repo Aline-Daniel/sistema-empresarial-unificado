@@ -1,104 +1,44 @@
-# CRUD em PHP e MySQL
+# Sistema Empresarial Unificado — PHP e MySQL
 
-Desenvolvimento de um Sistema Empresarial utilizando o acesso a banco de dados, com funções de cadastrar, modificar, visualizar e remover os dados.
+Aplicação didática para gerenciar funcionários e funções/cargos, demonstrando operações CRUD, relacionamento entre tabelas e SQL relacional.
 
+## Tecnologias
+- PHP (PDO), MySQL/MariaDB
+- HTML, CSS, Bootstrap e JavaScript
+- Estrutura do banco documentada em projeto.sql
 
+## Funcionalidades
+- Listagem, cadastro, edição e exclusão de funcionários.
+- Cadastro e gerenciamento de cargos/funções.
+- Relacionamento entre as tabelas funcionario e funcao por id_funcao (chave estrangeira).
 
-## 📌 Tecnologias
+## Como executar localmente
+1. Instale PHP 8.1+ com extensão pdo_mysql e MySQL/MariaDB.
+2. Crie um banco VAZIO separado para testes.
+3. Leia o arquivo projeto.sql antes de importar; ele define tabelas e inclui dados de exemplo. Jamais importe sem backup em um banco real.
+4. Configure DB_HOST, DB_PORT (padrão 3306), DB_NAME, DB_USER e DB_PASSWORD no ambiente de execução do PHP. O modelo .env.example não é carregado automaticamente.
+5. Inicie: php -S 127.0.0.1:8000
+6. Abra: http://127.0.0.1:8000/index.php
 
-- PHP
-- MySQL | PhpMyAdmin
-- JavaScript
-- HTML
-- CSS
-- BOOTSTRAP
+Exemplo de configuração (valores fictícios):
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_NAME=empresa_teste
+    DB_USER=usuario_teste
+    DB_PASSWORD=defina_uma_senha_localmente
 
-## 📌 Conexão com Banco de Dados:
+## Estrutura dos dados
+Funcao: identificador, setor, salário e descrição.
+Funcionario: identificador, nome, sobrenome, endereço, nascimento, telefone, CPF, e-mail e id_funcao.
+Os registros de funcionário são associados à tabela de funções. O script SQL é material demonstrativo e não deve ser aplicado sobre dados de produção.
 
-```
-$dbNome = 'dbNome'
-$dbHost = 'nomeDoDominioOuIP:Porta'
-$dbUsuario = 'usuarioDoMysql'
-$dbSenha 'senhaDoUsuario'
+## Segurança
+- A conexão PDO agora lê credenciais de variáveis de ambiente e utiliza utf8mb4 com prepared statements nativos.
+- Atenção: esta é apenas a configuração da conexão; os formulários e endpoints originais ainda precisam de auditoria completa, validação, proteção CSRF e autenticação antes de exposição pública.
+- O sistema não possui login de administrador: use apenas ambiente local ou isolado. Não cadastre CPF, endereço ou outros dados pessoais reais.
+- Se alguma credencial já tiver sido incluída no histórico Git, troque-a no MySQL; limpar o código atual não remove o histórico antigo.
 
-```
-## 📌 Instruções para Importar o Banco de Dados
+## Validação
+O GitHub Actions valida a sintaxe dos arquivos PHP com PHP 8.2. Testes reais com MySQL e análise funcional completa ainda são necessários.
 
-Para utilizar o projeto, siga estas etapas:
-
-1. Faça o download do arquivo `projeto.sql` no repositório.
-2. Abra seu sistema de gerenciamento de banco de dados (por exemplo, MySQL Workbench).
-3. Crie um novo banco de dados ou selecione um banco de dados existente onde deseja importar os dados.
-4. Importe o arquivo `projeto.sql` no banco de dados:
-   - No MySQL Workbench, vá para "Server" > "Data Import" > "Import from Self-Contained File" e selecione o arquivo `projeto.sql`.
-5. Siga as instruções do seu sistema de gerenciamento de banco de dados para concluir o processo de importação.
-
-Agora você está pronto para usar o projeto com o banco de dados importado.
-
-## 📌 Lógica de Negócio
-
-Este documento descreve a lógica de negócio das tabelas `funcao` e `funcionario` de um sistema de gerenciamento de funcionários. As tabelas foram definidas com as seguintes colunas:
-
-#### Tabela `funcao`
-
-- `setor` (varchar(15)): Representa o setor em que a função está associada.
-
-- `salario` (float): Representa o salário associado à função.
-
-- `descricao` (varchar(20)): Descreve a função em poucas palavras.
-
-- `id` (int(11)): É a chave primária da tabela, identificando exclusivamente cada função.
-
-#### Tabela `funcionario`
-
-- `endereco` (varchar(55)): Representa o endereço do funcionário.
-
-- `email` (varchar(20)): Armazena o endereço de e-mail do funcionário.
-
-- `data_nasc` (date): Contém a data de nascimento do funcionário.
-
-- `telefone` (int(11)): Armazena o número de telefone do funcionário.
-
-- `id` (int(11)): É a chave primária da tabela, identificando exclusivamente cada funcionário.
-
-- `cpf` (int(11)): Contém o número de CPF do funcionário.
-
-- `id_funcao` (int(11)): É uma chave estrangeira que se relaciona com a tabela `funcao` por meio do campo `id`. Indica a função associada ao funcionário.
-
-- `nome` (varchar(50)): Armazena o nome do funcionário.
-
-- `sobrenome` (varchar(50)): Contém o sobrenome do funcionário.
-
-### :black_medium_small_square: **Índices**
-
-As tabelas têm índices definidos da seguinte maneira:
-
-#### Tabela `funcao`
-
-- Chave primária: O campo `id` é a chave primária da tabela `funcao`.
-
-#### Tabela `funcionario`
-
-- Chave primária: O campo `id` é a chave primária da tabela `funcionario`.
-
-- Índice `id_funcao`: O campo `id_funcao` possui um índice que se relaciona com o campo `id` da tabela `funcao`.
-
-### :black_medium_small_square:  **Relacionamento**
-
-Existe um relacionamento entre as tabelas `funcionario` e `funcao` por meio do campo `id_funcao` na tabela `funcionario`. Isso permite associar cada funcionário a uma função específica.
-
-### :black_medium_small_square:  AUTO_INCREMENT
-
-Os campos `id` nas tabelas `funcao` e `funcionario` são configurados como AUTO_INCREMENT para garantir que cada registro tenha um ID único automaticamente atribuído pelo sistema.
-
-### :black_medium_small_square:  **Restrições de Integridade**
-
-Foi definida uma restrição de integridade referencial (FOREIGN KEY) no campo `id_funcao` da tabela `funcionario`, referenciando o campo `id` da tabela `funcao`. Isso garante que cada valor de `id_funcao` em `funcionario` esteja relacionado a uma função existente em `funcao`.
-
-Isso conclui a descrição da lógica de negócio das tabelas `funcao` e `funcionario`. Essas tabelas são fundamentais para o gerenciamento de funcionários e suas respectivas funções.
-
-
-:tada: Agradecemos por visitar e explorar o nosso projeto! Se tiver alguma dúvida ou feedback, não hesite em entrar em contato:
-
-- Email: **alinedaniel18@gmail.com**
-
+Origem: cópia pública de AlineDaniel/sistema-empresarial-unificado. Preserve a autoria dos trabalhos recuperados.
